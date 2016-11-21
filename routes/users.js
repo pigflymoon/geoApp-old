@@ -19,6 +19,8 @@ var geocoder = NodeGeocoder(options);
 router.get('/', function (req, response, next) {
     // Reverse Geocoding
 
+    
+
     var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
 
     request({url: geoUrl, json: true}, function (err, res, json) {
