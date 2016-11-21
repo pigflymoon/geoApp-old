@@ -15,7 +15,9 @@
     "request": "^2.78.0"
   },
   "devDependencies": {
-    "node-geocoder": "*",
-    "hbs": "~2.3.1"
+    "bluebird": "^3.4.6",
+    "bluebird-co": "^2.2.0",
+    "hbs": "~2.3.1",
+    "node-geocoder": "*"
   }
 }

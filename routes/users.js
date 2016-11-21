@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var NodeGeocoder = require('node-geocoder');
 var request = require('request');
+var Promise = require('bluebird'),
+    bluebird_co = require('bluebird-co/manual');
 
 var options = {
     provider: 'google',
@@ -14,93 +16,15 @@ var options = {
 
 var geocoder = NodeGeocoder(options);
 
-
-/* GET users listing. */
-router.get('/', function (req, response, next) {
-    // Reverse Geocoding
-
-    
-
-    var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
-
-    request({url: geoUrl, json: true}, function (err, res, json) {
-        if (err) {
-            throw err;
-        } else {
-
-
-            var jsonData = (json.features);
-            var allAddress = [];
-            jsonData.forEach(function (value, index) {
-
-                Object.keys(value).forEach(function (prop) {
-                    if (value.hasOwnProperty("geometry")) {
-                        if (value[prop].hasOwnProperty("coordinates")) {
-
-                            let coordinatesData = [];
-                            var geoData = value[prop].coordinates;
-
-                            var latlng = {
-                                lat: geoData[1],
-                                lon: geoData[0]
-                            };
-                            //175.56166, -39.267914
-                            console.log(latlng);
-                            geocoder.reverse(latlng, function (err, res) {
-                                console.log(res);
-                                /*
-
-                                 [ {
-                                 formattedAddress: '180 McArthur Rd, Inchbonnie 7875, New Zealand',
-                                 latitude: -42.7277414,
-                                 longitude: 171.4493026,
-                                 extra:
-                                 { googlePlaceId: 'ChIJMViaJGgGL20Rg2jM-VsAlok',
-                                 confidence: 1,
-                                 premise: null,
-                                 subpremise: null,
-                                 neighborhood: null,
-                                 establishment: null },
-                                 administrativeLevels: { level1long: 'West Coast', level1short: 'West Coast' },
-                                 streetNumber: '180',
-                                 streetName: 'McArthur Road',
-                                 city: 'Inchbonnie',
-                                 country: 'New Zealand',
-                                 countryCode: 'NZ',
-                                 zipcode: '7875',
-                                 provider: 'google' } ]
-                                 */
-                                console.log(res[0].formattedAddress);
-                            });
-
-
-                        }
-
-                    }
-
-                })
-
-            });
-
-
-        }
-
-    });
-
-
-    // res.render('users', {title: 'test'});
-    // res.send('respond with a resource');
-});
-
 function geoData() {
     var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
-
+    console.log('hi data');
     request({url: geoUrl, json: true}, function (err, res, json) {
         if (err) {
             throw err;
         } else {
 
-
+            console.log('called');
             var jsonData = (json.features);
             var allAddress = [];
             jsonData.forEach(function (value, index) {
@@ -127,17 +51,41 @@ function geoData() {
 
     });
 }
-function getAddress(geoData) {
+function getAddress(lnglat) {
 
     var latlng = {
-        lat: geoData[1],
-        lon: geoData[0]
+        lat: lnglat[1],
+        lon: lnglat[0]
     };
 
+    console.log('called address');
     geocoder.reverse(latlng, function (err, res) {
         return res[0].formattedAddress;
     });
 }
+
+console.log("hello");
+
+router.get('/', function(req, res, next) {
+    var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
+    console.log('hi data');
+    Promise.coroutine(function* () {
+
+        var profile = yield geoData();
+        // var address = yield getAddress(profile);
+        console.log(profile);
+
+
+    })().catch(function(errs) {
+        //handle errors on any events
+        console.log(errs);
+    })
+
+
+});
+/* GET users listing. */
+
+
 
 
 
