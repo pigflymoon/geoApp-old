@@ -2,8 +2,7 @@ var express = require('express');
 var router = express.Router();
 var NodeGeocoder = require('node-geocoder');
 var request = require('request');
-var Promise = require('bluebird'),
-    bluebird_co = require('bluebird-co/manual');
+
 
 var options = {
     provider: 'google',
@@ -35,7 +34,10 @@ function geoData() {
 
                             let coordinatesData = [];
                             var geoData = value[prop].coordinates;
-                            return geoData;
+
+                            // allAddress.push(geoData);
+                            getAddress(geoData);
+                            // return geoData;
 
 
                         }
@@ -45,48 +47,118 @@ function geoData() {
                 })
 
             });
+            // console.log(allAddress);
+            // return allAddress;
 
 
         }
 
     });
 }
-function getAddress(lnglat) {
+function getAddress(geoData) {
 
+
+
+    var promise = new Promise(function(resolve, reject) {
+        var geo = getLatlng();
+        if (geo){
+            resolve(value);
+        } else {
+            reject(error);
+        }
+    });
+
+    promise.then(function(value) {
+        // success
+        console.log('return value is ' +value);
+    }, function(value) {
+        // failure
+        console.log('false ');
+    });
+
+    console.log('hello' +all);
     var latlng = {
-        lat: lnglat[1],
-        lon: lnglat[0]
+        lat: geoData[1],
+        lon: geoData[0]
     };
 
-    console.log('called address');
     geocoder.reverse(latlng, function (err, res) {
-        return res[0].formattedAddress;
+        let address = res[0].formattedAddress;
+        return address
+        // return res[0].formattedAddress;
     });
 }
 
-console.log("hello");
-
-router.get('/', function(req, res, next) {
+function getLatlng(){
     var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
-    console.log('hi data');
-    Promise.coroutine(function* () {
+    var allLatlng = [];
 
-        var profile = yield geoData();
-        // var address = yield getAddress(profile);
-        console.log(profile);
+    request({url: geoUrl, json: true}, function (err, res, json) {
+        if (err) {
+            throw err;
+        } else {
+
+            console.log('called');
+            var jsonData = (json.features);
+
+            jsonData.forEach(function (value, index) {
+
+                Object.keys(value).forEach(function (prop) {
+                    if (value.hasOwnProperty("geometry")) {
+                        if (value[prop].hasOwnProperty("coordinates")) {
+
+                            let coordinatesData = [];
+                            var geoData = value[prop].coordinates;
 
 
-    })().catch(function(errs) {
-        //handle errors on any events
-        console.log(errs);
-    })
+                            allLatlng.push(geoData);
+
+
+                            // response.render('users', {title: address});
+                            // // return geoData;
+
+
+                        }
+
+                    }
+
+                })
+
+            });
+            return allLatlng;
+            // response.send(allAddress);
+        }
+
+    });
+
+}
+
+
+router.get('/', function (req, res, next) {
+    // return geoData();
+    console.log('hi');
+    // res.send('hi');
+    var promise = new Promise(function(resolve, reject) {
+        var geo = getAddress();
+        if (geo){
+            resolve(value);
+        } else {
+            reject(error);
+        }
+    });
+    return promise;
+
+    promise.then(function(value) {
+        // success
+        console.log('address return value is ' +value);
+    }, function(value) {
+        // failure
+        console.log('address false ');
+    });
+    // getAddress();
 
 
 });
-/* GET users listing. */
-
-
-
 
 
 module.exports = router;
