@@ -55,109 +55,119 @@ function geoData() {
 
     });
 }
-function getAddress(geoData) {
 
 
+var getLatlng = function () {
+    var promise = new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
+            var allLatlng = [];
 
-    var promise = new Promise(function(resolve, reject) {
-        var geo = getLatlng();
-        if (geo){
-            resolve(value);
-        } else {
-            reject(error);
-        }
-    });
+            request({url: geoUrl, json: true}, function (err, res, json) {
+                if (err) {
+                    throw err;
+                } else {
 
-    promise.then(function(value) {
-        // success
-        console.log('return value is ' +value);
-    }, function(value) {
-        // failure
-        console.log('false ');
-    });
+                    console.log('called');
+                    var jsonData = (json.features);
 
-    console.log('hello' +all);
-    var latlng = {
-        lat: geoData[1],
-        lon: geoData[0]
-    };
+                    jsonData.forEach(function (value, index) {
 
-    geocoder.reverse(latlng, function (err, res) {
-        let address = res[0].formattedAddress;
-        return address
-        // return res[0].formattedAddress;
-    });
-}
+                        Object.keys(value).forEach(function (prop) {
+                            if (value.hasOwnProperty("geometry")) {
+                                if (value[prop].hasOwnProperty("coordinates")) {
 
-function getLatlng(){
-    var geoUrl = "https://api.geonet.org.nz/intensity?type=measured";
-    var allLatlng = [];
-
-    request({url: geoUrl, json: true}, function (err, res, json) {
-        if (err) {
-            throw err;
-        } else {
-
-            console.log('called');
-            var jsonData = (json.features);
-
-            jsonData.forEach(function (value, index) {
-
-                Object.keys(value).forEach(function (prop) {
-                    if (value.hasOwnProperty("geometry")) {
-                        if (value[prop].hasOwnProperty("coordinates")) {
-
-                            let coordinatesData = [];
-                            var geoData = value[prop].coordinates;
+                                    let coordinatesData = [];
+                                    var geoData = value[prop].coordinates;
 
 
-                            allLatlng.push(geoData);
+                                    allLatlng.push(geoData);
 
 
-                            // response.render('users', {title: address});
-                            // // return geoData;
+                                    // response.render('users', {title: address});
+                                    // // return geoData;
 
 
-                        }
+                                }
 
-                    }
+                            }
 
-                })
+                        })
+
+                    });
+                    resolve(allLatlng);
+
+                }
 
             });
-            return allLatlng;
-            // response.send(allAddress);
-        }
-
-    });
-
-}
 
 
-router.get('/', function (req, res, next) {
-    // return geoData();
-    console.log('hi');
-    // res.send('hi');
-    var promise = new Promise(function(resolve, reject) {
-        var geo = getAddress();
-        if (geo){
-            resolve(value);
-        } else {
-            reject(error);
-        }
+        }, 2000);
     });
     return promise;
+};
+var getLngLat = function (allLatlng) {
 
-    promise.then(function(value) {
-        // success
-        console.log('address return value is ' +value);
-    }, function(value) {
-        // failure
-        console.log('address false ');
+
+
+    var promise = new Promise(function (resolve, reject) {
+        for (let value of allLatlng) {
+            let location = Object.create({}, {lat: {value: value[0]}, lon: {value: value[1]}});
+            resolve(location);
+            // allLocation.push(location);
+            // console.log(location.lat);
+            //
+            // geocoder.reverse(location, function (err, res) {
+            //     console.log(res);
+            //     allLocation.push(res[0].formattedAddress);
+            // });
+        }
+        // resolve(allLocation);
+        // var latlng = {
+        //     lat: geoData[1],
+        //     lon: geoData[0]
+        // };
+        //
+        // geocoder.reverse(latlng, function (err, res) {
+        //     let address = res[0].formattedAddress;
+        //     resolve(address);
+        //     // return res[0].formattedAddress;
+        // });
     });
-    // getAddress();
+    return promise;
+};
 
+var getAddress = function (lnglat) {
+    var allLocation = [];
+    console.log(lnglat.lat)
+    var promise = new Promise(function (resolve, reject) {
+        geocoder.reverse({lat:172.73265, lon:-43.557934})
+            .then(function(res) {
+                console.log(res);
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+        // geocoder.reverse({lat:45.767, lon:4.833}, function (err, res) {
+        //     console.log('res'+res);
+            // var address = res[0].formattedAddress;
+            // resolve(address);
+            //{lat:45.767, lon:4.833}
+            //{lat:172.73265, lon:-43.557934}
+            // allLocation.push(res[0].formattedAddress);
+        // });
+        // resolve(allLocation);
+    })
 
+    return promise;
+
+};
+
+router.get('/', function (req, res, next) {
+
+    console.log('hi');
+    var address = getLatlng().then(getLngLat).then(getAddress);
+    console.log(address);
 });
 
 
