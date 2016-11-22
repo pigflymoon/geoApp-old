@@ -9,7 +9,9 @@ var options = {
 
     // Optional depending on the providers
     httpAdapter: 'https', // Default
-    apiKey: 'AIzaSyAmETJsBnNIgRl9y36Lk7Av-zEUPOygdVw', // for Mapquest, OpenCage, Google Premier
+    //AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU
+    apiKey: 'AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU',
+    // apiKey: 'AIzaSyAmETJsBnNIgRl9y36Lk7Av-zEUPOygdVw', // for Mapquest, OpenCage, Google Premier
     formatter: null         // 'gpx', 'string', ...
 };
 
@@ -109,55 +111,57 @@ var getLatlng = function () {
 var getLngLat = function (allLatlng) {
 
 
-
     var promise = new Promise(function (resolve, reject) {
         for (let value of allLatlng) {
-            let location = Object.create({}, {lat: {value: value[0]}, lon: {value: value[1]}});
+            var location = value.toString().split(',').reverse().join(',');
+            console.log(location);
+            // let location = Object.create({}, {lat: {value: value[0]}, lon: {value: value[1]}});
             resolve(location);
-            // allLocation.push(location);
-            // console.log(location.lat);
-            //
-            // geocoder.reverse(location, function (err, res) {
-            //     console.log(res);
-            //     allLocation.push(res[0].formattedAddress);
-            // });
+
         }
-        // resolve(allLocation);
-        // var latlng = {
-        //     lat: geoData[1],
-        //     lon: geoData[0]
-        // };
-        //
-        // geocoder.reverse(latlng, function (err, res) {
-        //     let address = res[0].formattedAddress;
-        //     resolve(address);
-        //     // return res[0].formattedAddress;
-        // });
+
     });
     return promise;
 };
 
 var getAddress = function (lnglat) {
     var allLocation = [];
-    console.log(lnglat.lat)
+
     var promise = new Promise(function (resolve, reject) {
-        geocoder.reverse({lat:172.73265, lon:-43.557934})
-            .then(function(res) {
+        //
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
+
+        request({
+            url: url,
+            json: true
+        }, function (error, response, data) {
+
+            if (data.status == 'OK') {
+                var address = data.results[0].formatted_address;
+                console.log(address);
+                return address;
+            }
+
+        });
+
+        /*
+        geocoder.reverse(lnglat)
+            .then(function (res) {
                 console.log(res);
+                if (res.status == 'OK') {
+                    var address = data.results[0].formatted_address;
+                    console.log(address);
+
+                } else {
+                    console.log(res.status);
+                }
             })
-            .catch(function(err) {
-                console.log(err);
+            .catch(function (err) {
+                console.log("error is " + err);
             });
-        // geocoder.reverse({lat:45.767, lon:4.833}, function (err, res) {
-        //     console.log('res'+res);
-            // var address = res[0].formattedAddress;
-            // resolve(address);
-            //{lat:45.767, lon:4.833}
-            //{lat:172.73265, lon:-43.557934}
-            // allLocation.push(res[0].formattedAddress);
-        // });
-        // resolve(allLocation);
-    })
+
+        */
+    });
 
     return promise;
 
