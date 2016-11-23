@@ -18,6 +18,7 @@
     "bluebird": "^3.4.6",
     "bluebird-co": "^2.2.0",
     "hbs": "~2.3.1",
+    "jquery": "^3.1.1",
     "node-geocoder": "*"
   }
 }
