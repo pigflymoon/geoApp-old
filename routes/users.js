@@ -61,7 +61,7 @@ var getAddress = function (allLnglat) {
         setTimeout(function () {
             for (let lnglat of allLnglat) {
                 var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
-
+                //
                 request({
                     url: url,
                     json: true
@@ -71,20 +71,16 @@ var getAddress = function (allLnglat) {
                         var address = data.results[0].formatted_address;
                         // console.log(address);
                         allLocation.push(address);
-
-                        // console.log(allLocation);
+                        console.log('allocation ' + allLocation);
                     }
 
                 });
+
             }
 
 
             resolve(allLocation);
         }, 5000);
-
-        //
-
-
     });
 
     return promise;
@@ -94,9 +90,15 @@ var getAddress = function (allLnglat) {
 router.get('/', function (req, res, next) {
 
     console.log('hi');
-    getLatlng().then(getAddress).then(function (allLocation) {
-        res.render('users', { title: allLocation });
+
+    // res.render('users', {title: getLatlng().then(getAddress).then(template.address)});
+    var promiseB = getLatlng().then(getAddress).then(function (result) {
+        // do something with result
+        res.render('users', {title: result});
+        console.log('result' + result)
     });
+    promiseB();
+
 });
 
 
