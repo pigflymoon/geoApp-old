@@ -58,47 +58,103 @@ var getAddress = function (allLnglat) {
 
     var promise = new Promise(function (resolve, reject) {
         var allLocation = [];
+        // setTimeout(function () {
+        for (let lnglat of allLnglat) {
+            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
+            //
+            request({
+                url: url,
+                json: true
+            }, function (error, response, data) {
+
+                if (data.status == 'OK') {
+                    var address = data.results[0].formatted_address;
+                    // console.log(address);
+                    allLocation.push(address);
+
+                }
+
+            });
+
+        }
+
+
+        // }, 100);
+        console.log(allLocation);
+        resolve(allLocation);
+    });
+
+    return promise;
+
+};
+var getAllAddress = function (address) {
+    var promise = new Promise(function (resolve, reject) {
         setTimeout(function () {
-            for (let lnglat of allLnglat) {
-                var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
-                //
-                request({
-                    url: url,
-                    json: true
-                }, function (error, response, data) {
-
-                    if (data.status == 'OK') {
-                        var address = data.results[0].formatted_address;
-                        // console.log(address);
-                        allLocation.push(address);
-                        console.log('allocation ' + allLocation);
-                    }
-
-                });
-
-            }
-
-
-            resolve(allLocation);
-        }, 5000);
+            console.log(address);
+            resolve(address);
+        }, 100);
     });
 
     return promise;
 
 };
 
-router.get('/', function (req, res, next) {
 
-    console.log('hi');
 
-    // res.render('users', {title: getLatlng().then(getAddress).then(template.address)});
-    var promiseB = getLatlng().then(getAddress).then(function (result) {
-        // do something with result
-        res.render('users', {title: result});
-        console.log('result' + result)
+// var allLnglat =
+//     [
+//     [-43.17654, 172.65146],
+//     [-44.827023, 169.01756],
+//     [-38.23555, 176.50584]
+// ];
+
+
+// var promiseArr = [];
+function asyncMethod(lnglat) {
+    return new Promise(function(resolve, reject) {
+        setTimeout(function () {
+            var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
+            //
+            request({
+                url: url,
+                json: true
+            }, function (error, response, data) {
+
+                if (data.status == 'OK') {
+                    var address = data.results[0].formatted_address;
+
+                    resolve([address]);
+                }
+
+            });
+
+        }, 1000);
+
     });
-    promiseB();
+}
 
+// for(var i = 0; i < allLnglat.length; i++) {
+//     promiseArr.push(asyncMethod(allLnglat[i]));
+// }
+
+//
+
+
+router.get('/', function (req, res, next) {
+    var promiseArr = [];
+    getLatlng().then(function(allLnglat){
+
+        for(var i = 0; i < allLnglat.length; i++) {
+            promiseArr.push(asyncMethod(allLnglat[i]));
+        }
+
+    });
+
+    Promise.all(promiseArr).then(function(results) {
+        console.log("address is : "+results);
+        res.render('users', { title: results});
+
+    });
 });
 
 

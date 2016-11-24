@@ -19,6 +19,7 @@
     "bluebird-co": "^2.2.0",
     "hbs": "~2.3.1",
     "jquery": "^3.1.1",
-    "node-geocoder": "*"
+    "node-geocoder": "*",
+    "request-promise": "^4.1.1"
   }
 }
