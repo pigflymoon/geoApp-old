@@ -101,16 +101,17 @@ var getAllAddress = function (address) {
 
 
 
-// var allLnglat =
-//     [
-//     [-43.17654, 172.65146],
-//     [-44.827023, 169.01756],
-//     [-38.23555, 176.50584]
-// ];
+var allLnglat =
+    [
+    [-43.17654, 172.65146],
+    [-44.827023, 169.01756],
+    [-38.23555, 176.50584]
+];
 
 
-// var promiseArr = [];
+var promiseArr = [];
 function asyncMethod(lnglat) {
+    var address;
     return new Promise(function(resolve, reject) {
         setTimeout(function () {
             var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
@@ -121,7 +122,7 @@ function asyncMethod(lnglat) {
             }, function (error, response, data) {
 
                 if (data.status == 'OK') {
-                    var address = data.results[0].formatted_address;
+                    address = data.results[0].formatted_address;
 
                     resolve([address]);
                 }
@@ -130,31 +131,76 @@ function asyncMethod(lnglat) {
 
         }, 1000);
 
+        // resolve([address]);
+
     });
 }
 
-// for(var i = 0; i < allLnglat.length; i++) {
-//     promiseArr.push(asyncMethod(allLnglat[i]));
-// }
+for(var i = 0; i < allLnglat.length; i++) {
+    promiseArr.push(asyncMethod(allLnglat[i]));
+}
 
 //
 
 
 router.get('/', function (req, res, next) {
-    var promiseArr = [];
+    // var promiseArr = [];
+    // getLatlng().then(function(allLnglat){
+    //
+    //     for(var i = 0; i < allLnglat.length; i++) {
+    //         promiseArr.push(asyncMethod(allLnglat[i]));
+    //     }
+    //
+    // });
+
+    // Promise.all(promiseArr).then(function(results) {
+    //     console.log("address is : "+results);
+    //     res.render('users', { title: results});
+    //
+    // });
+    // var allLnglat = [
+    //     [-43.17654, 172.65146],
+    //     [-44.827023, 169.01756],
+    //     [-38.23555, 176.50584]
+    // ];
+    var allAddress = [];
     getLatlng().then(function(allLnglat){
+        allLnglat.reduce(function (p,lnglat) {
 
-        for(var i = 0; i < allLnglat.length; i++) {
-            promiseArr.push(asyncMethod(allLnglat[i]));
-        }
+            return p.then(function () {
+                return new Promise(function (resolve, reject) {
+
+                    var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lnglat + "&location_type=ROOFTOP&result_type=street_address&key=AIzaSyAcnccCGHGJkq3VF6SWZNwyPV7mov8YRMU";
+                    //
+                    request({
+                        url: url,
+                        json: true
+                    }, function (error, response, data) {
+
+                        if (data.status == 'OK') {
+                            var address = data.results[0].formatted_address;
+
+                            allAddress.push(address);
+                            // resolve(allAddress)
+                        }
+                        resolve(allAddress)
+
+                    });
+
+
+
+                });
+            });
+        }, Promise.resolve()).then(function(result){
+            res.render('users', { title: result});
+
+            // console.log(result)
+
+
+        });
 
     });
 
-    Promise.all(promiseArr).then(function(results) {
-        console.log("address is : "+results);
-        res.render('users', { title: results});
-
-    });
 });
 
 
