@@ -71,8 +71,7 @@ router.get('/', cache('10 minutes'), function (req, res) {
                 });
             });
         }, Promise.resolve()).then(function (result) {
-            res.json({title: result})
-            // res.render('users', {title: result});
+            res.render('users', {title: result});
         }, function (error) {
             res.render('users', {title: 'Oops,wait for a minute'});
         });
