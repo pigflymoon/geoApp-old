@@ -43,7 +43,7 @@ var getLatlng = function () {
     return promise;
 };
 
-router.get('/', cache('10 minutes'), function (req, res) {
+router.get('/', cache('1 day'), function (req, res) {
     var allAddress = [];
     getLatlng().then(function (allLnglat) {
         allLnglat.reduce(function (p, lnglat) {
