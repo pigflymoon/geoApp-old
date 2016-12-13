@@ -8,7 +8,10 @@ var hb = require('hbs');
 
 
 var index = require('./routes/index');
-var grid = require('./routes/grid');
+var intensity = require('./routes/intensity');
+var news = require('./routes/news');
+var stats = require('./routes/stats');
+
 var cache = require('./routes/cache');
 var info = require('./routes/info');
 var app = express();
@@ -27,7 +30,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/grid', grid);
+app.use('/intensity', intensity);
+app.use('/news',news);
+app.use('/stats',stats);
+
 app.use('/cache', cache);
 app.use('/info',info);
 

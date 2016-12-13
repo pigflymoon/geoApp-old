@@ -20,7 +20,7 @@
         if (length === classes.length) {
             classes.push(className);
         }
-
+        console.log(classes);
         element.className = classes.join(' ');
     }
 

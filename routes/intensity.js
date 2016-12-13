@@ -71,14 +71,14 @@ router.get('/', cache('1 day'), function (req, res) {
                 });
             });
         }, Promise.resolve()).then(function (result) {
-            res.render('grid', {title: result});
+            res.render('intensity', {title: result});
         }, function (error) {
-            res.render('grid', {title: 'Oops,wait for a minute'});
+            res.render('intensity', {title: 'Oops,wait for a minute'});
         });
 
     });
 
 
-})
+});
 
 module.exports = router;
