@@ -10,6 +10,7 @@ var hb = require('hbs');
 var index = require('./routes/index');
 var grid = require('./routes/grid');
 var cache = require('./routes/cache');
+var info = require('./routes/info');
 var app = express();
 
 // view engine setup
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/grid', grid);
 app.use('/cache', cache);
+app.use('/info',info);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
