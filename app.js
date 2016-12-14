@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var intensity = require('./routes/intensity');
 var news = require('./routes/news');
 var stats = require('./routes/stats');
+var mmi = require('./routes/mmi');
 
 var cache = require('./routes/cache');
 var info = require('./routes/info');
@@ -33,6 +34,7 @@ app.use('/', index);
 app.use('/intensity', intensity);
 app.use('/news',news);
 app.use('/stats',stats);
+app.use('/mmi',mmi);
 
 app.use('/cache', cache);
 app.use('/info',info);

@@ -16,7 +16,6 @@ var getLatlng = function () {
                 if (err) {
                     throw err;
                 } else {
-                    console.log('called');
                     var jsonData = (json.features);
 
                     jsonData.forEach(function (value, index) {

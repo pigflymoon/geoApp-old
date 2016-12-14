@@ -16,7 +16,6 @@ var getNews = function () {
                 } else {
                     console.log('called');
                     var rate = (json.rate.perDay);
-                    
                     console.log('hi jsonData' + rate);
                     resolve(rate);
                 }
