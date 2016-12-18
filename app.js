@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+app.use('/index', index);
 app.use('/intensity', intensity);
 app.use('/news',news);
 app.use('/stats',stats);

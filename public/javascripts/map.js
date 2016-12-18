@@ -6,7 +6,8 @@ function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 5,
         center: myLatlng,
-        mapTypeId: 'terrain'
+        mapTypeId: 'terrain',
+        scrollwheel: false
     });
 
     // Create a <script> tag and set the USGS URL as the source.

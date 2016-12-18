@@ -59,7 +59,7 @@ a:visited {
     padding: 1em;
 }
 
-.map {
+.layout, .main, .map-layout, .map {
     height: 100%;
 }
 
@@ -71,5 +71,6 @@ html, body {
 }
 
 .location-map {
+    height: 100%;
     margin: 0 auto;
 }
